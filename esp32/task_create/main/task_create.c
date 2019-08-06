@@ -26,10 +26,6 @@ void blink_task(void * param);
 void app_main()
 {
 	xTaskCreate(blink_task, "blink_task", 512, NULL, 10, NULL);
-
-	while(1){
-		vTaskDelay(1500 / portTICK_PERIOD_MS);
-	}
 }
 
 void blink_task(void * param)
