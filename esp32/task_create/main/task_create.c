@@ -17,32 +17,40 @@
 */
 #define BLINK_GPIO_Index 		2
 	
+#define BLINK_TASK_NAME				"led blink"
+#define TICK_COUNTER_TASK_NAME		"tick counter"
 
 
 void blink_task(void * param);
-	
+void tick_counter_task(void * param);	
 
 static unsigned int usr_ticks;
 
 void app_main()
 {
 	vTaskDelay(pdMS_TO_TICKS(100));			//等待系统初始化
-	// 任务栈的大小 小于 1024 报错
-	xTaskCreatePinnedToCore(blink_task, "blink_task", 2048, "blink_task", 5, NULL, tskNO_AFFINITY);
+	
+	gpio_pad_select_gpio(BLINK_GPIO_Index);
+	/* Set the GPIO as a push/pull output */
+	gpio_pad_pullup(BLINK_GPIO_Index);
+	gpio_set_direction(BLINK_GPIO_Index, GPIO_MODE_OUTPUT);
+	
+	// 任务栈的大小 小于 1024 报错, 制定cpu创建task
+	// configMINIMAL_STACK_SIZE
+	xTaskCreatePinnedToCore(blink_task, BLINK_TASK_NAME, 2048, "blink_task", 5, NULL, tskNO_AFFINITY);
+	xTaskCreate(tick_counter_task, TICK_COUNTER_TASK_NAME, configMINIMAL_STACK_SIZE, TICK_COUNTER_TASK_NAME, 6, NULL);
+#if 0
     while(1) {
 		/* Blink off (output low) */
 		printf("Ticks: %d\n", usr_ticks);
 		vTaskDelay(1500 / portTICK_PERIOD_MS);
 		usr_ticks++;
     }
+#endif
 }
 
 void blink_task(void * param)
 {
-	gpio_pad_select_gpio(BLINK_GPIO_Index);
-	/* Set the GPIO as a push/pull output */
-	gpio_pad_pullup(BLINK_GPIO_Index);
-	gpio_set_direction(BLINK_GPIO_Index, GPIO_MODE_OUTPUT);
 
 	while(1) {
 		printf("LED loop, In task: %s,\n", (char *)param);	
@@ -61,5 +69,16 @@ void blink_task(void * param)
 		vTaskDelay(1500 / portTICK_PERIOD_MS);
 	}
 
+}
+void tick_counter_task(void * param)
+{
+	while(1) {
+		printf("Ticks loop, In task: %s,\n", (char *)param);	
+		gpio_set_level(BLINK_GPIO_Index, 1);
+		vTaskDelay(100 / portTICK_PERIOD_MS);
+		gpio_set_level(BLINK_GPIO_Index, 0);
+		vTaskDelay(100 / portTICK_PERIOD_MS);
+		printf("Ticks: %d\n", usr_ticks);
+	}
 }
 
