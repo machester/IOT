@@ -10,7 +10,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
-#include "sdkconfig.h"
+// #include "sdkconfig.h"
 
 /* Can run 'make menuconfig' to choose the GPIO to blink,
    or you can edit the following line and set a number here.
@@ -22,10 +22,19 @@
 void blink_task(void * param);
 	
 
-	
+static unsigned int usr_ticks;
+
 void app_main()
 {
-	xTaskCreate(blink_task, "blink_task", 512, NULL, 10, NULL);
+	vTaskDelay(pdMS_TO_TICKS(100));			//等待系统初始化
+	// 任务栈的大小 小于 1024 报错
+	xTaskCreatePinnedToCore(blink_task, "blink_task", 2048, "blink_task", 5, NULL, tskNO_AFFINITY);
+    while(1) {
+		/* Blink off (output low) */
+		printf("Ticks: %d\n", usr_ticks);
+		vTaskDelay(1500 / portTICK_PERIOD_MS);
+		usr_ticks++;
+    }
 }
 
 void blink_task(void * param)
@@ -36,7 +45,7 @@ void blink_task(void * param)
 	gpio_set_direction(BLINK_GPIO_Index, GPIO_MODE_OUTPUT);
 
 	while(1) {
-		printf("LED loop\n");	
+		printf("LED loop, In task: %s,\n", (char *)param);	
 		gpio_set_level(BLINK_GPIO_Index, 1);
 		vTaskDelay(100 / portTICK_PERIOD_MS);
 		gpio_set_level(BLINK_GPIO_Index, 0);
