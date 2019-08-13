@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "---------- start  in 2 seconds --------"
-sleep2s
+sleep 2s
 echo "---------- clean *.o ------------------"
 rm -vf `find ./ -name "*.o"`
 sleep 2s

@@ -38,15 +38,7 @@ void app_main()
 	// 任务栈的大小 小于 1024 报错, 制定cpu创建task
 	// configMINIMAL_STACK_SIZE
 	xTaskCreatePinnedToCore(blink_task, BLINK_TASK_NAME, 2048, "blink_task", 5, NULL, tskNO_AFFINITY);
-	xTaskCreate(tick_counter_task, TICK_COUNTER_TASK_NAME, configMINIMAL_STACK_SIZE, TICK_COUNTER_TASK_NAME, 6, NULL);
-#if 0
-    while(1) {
-		/* Blink off (output low) */
-		printf("Ticks: %d\n", usr_ticks);
-		vTaskDelay(1500 / portTICK_PERIOD_MS);
-		usr_ticks++;
-    }
-#endif
+	xTaskCreate(tick_counter_task, TICK_COUNTER_TASK_NAME, 2048, TICK_COUNTER_TASK_NAME, 6, NULL);
 }
 
 void blink_task(void * param)
@@ -55,15 +47,15 @@ void blink_task(void * param)
 	while(1) {
 		printf("LED loop, In task: %s,\n", (char *)param);	
 		gpio_set_level(BLINK_GPIO_Index, 1);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(500 / portTICK_PERIOD_MS);
 		gpio_set_level(BLINK_GPIO_Index, 0);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(500 / portTICK_PERIOD_MS);
 		gpio_set_level(BLINK_GPIO_Index, 1);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(500 / portTICK_PERIOD_MS);
 		gpio_set_level(BLINK_GPIO_Index, 0);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(500 / portTICK_PERIOD_MS);
 		gpio_set_level(BLINK_GPIO_Index, 1);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(500 / portTICK_PERIOD_MS);
 
 		gpio_set_level(BLINK_GPIO_Index, 0);
 		vTaskDelay(1500 / portTICK_PERIOD_MS);
@@ -75,9 +67,9 @@ void tick_counter_task(void * param)
 	while(1) {
 		printf("Ticks loop, In task: %s,\n", (char *)param);	
 		gpio_set_level(BLINK_GPIO_Index, 1);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(200 / portTICK_PERIOD_MS);
 		gpio_set_level(BLINK_GPIO_Index, 0);
-		vTaskDelay(100 / portTICK_PERIOD_MS);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
 		printf("Ticks: %d\n", usr_ticks);
 	}
 }
