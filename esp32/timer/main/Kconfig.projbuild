@@ -1,0 +1,5 @@
+menu "Example Configuration"
+
+    config usr_timer
+        bool "usr_timer"
+endmenu
