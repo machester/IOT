@@ -16,12 +16,21 @@
 	
 #define BLINK_TASK_NAME				"led blink"
 #define TICK_COUNTER_TASK_NAME		"tick counter"
-
+#define TIMER_NAME					"USR_TIMER"
 
 void blink_task(void * param);
 void tick_counter_task(void * param);	
 
 static unsigned int usr_ticks;
+
+
+	typedef struct 
+	{
+		esp_timer_cb_t callback;		//!< Function to call when timer expires
+		void* arg;						//!< Argument to pass to the callback
+		esp_timer_dispatch_t dispatch_method;	//!< Call the callback from task or from ISR
+		const char* name;				//!< Timer name, used in esp_timer_dump function
+	} esp_timer_create_args_t;
 
 void app_main()
 {
@@ -31,6 +40,13 @@ void app_main()
 	/* Set the GPIO as a push/pull output */
 	gpio_pad_pullup(BLINK_GPIO_Index);
 	gpio_set_direction(BLINK_GPIO_Index, GPIO_MODE_OUTPUT);
+
+
+	esp_timer_create_args_t tim = {
+		.callback = tim_recall,
+		.arg = NULL,
+		.name = TIMER_NAME,
+	};
 	
 	// 任务栈的大小 小于 1024 报错, 制定cpu创建task
 	// configMINIMAL_STACK_SIZE
@@ -40,6 +56,9 @@ void app_main()
 
 void blink_task(void * param)
 {
+	timer_init(timer_group_t group_num, timer_idx_t timer_num, const timer_config_t * config)
+		esp_timer_create
+		esp_timer_start_periodic
 
 	while(1) {
 		printf("LED loop, In task: %s,\n", (char *)param);	
