@@ -79,7 +79,7 @@ void app_main()
 		printf("timer create failed \n");
 		return;
 	}
-	err = esp_timer_start_periodic(fw_timer_handler, (0.5 * (1000 * 1000))); // recall every sec
+	err = esp_timer_start_periodic(fw_timer_handler, (0.5 * (1000 * 1000))); // recall every 0.5 sec
 	if(err != ESP_OK) {
 		printf("timer start period failed \n");
 		return;
