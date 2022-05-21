@@ -1,5 +1,0 @@
-menu "Example Configuration"
-
-    config TASK_CREATE
-        bool "task_create"
-endmenu
