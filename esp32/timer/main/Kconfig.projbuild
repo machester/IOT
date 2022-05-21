@@ -1,0 +1,18 @@
+menu "Example Configuration"
+
+    config usr_timer
+        bool "usr_timer"
+        default y
+        help
+            config default timer
+    config BLINK_GPIO
+        int "Blink GPIO number"
+        range 0 34
+        default 2
+        help
+            GPIO number (IOxx) to blink on and off.
+
+            Some GPIOs are used for other purposes (flash connections, etc.) and cannot be used to blink.
+
+            GPIOs 35-39 are input-only so cannot be used as outputs.
+endmenu
